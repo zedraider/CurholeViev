@@ -1,3 +1,4 @@
+# проверка изменений
 import random
 import threading
 import time
