@@ -4,7 +4,6 @@ from tkinter import ttk, messagebox, filedialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
-
 class MartingaleApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -763,3 +762,4 @@ class MartingaleApp(tk.Tk):
 
 
 if __name__ == "__main__": MartingaleApp().mainloop()
+
