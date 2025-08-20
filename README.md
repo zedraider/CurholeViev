@@ -140,8 +140,8 @@ The program is distributed freely. Copyright belongs to Alexey Melnikov (zedraid
 
 For questions, suggestions, and bug reports, please contact the author:
 - Email: zedraider@bk.ru
-- Version: 2.0
-- Date: 2025-08-19
+- Version: 2.1
+- Date: 2025-08-21
 
 ---
 
@@ -287,7 +287,7 @@ CurholeView — это симулятор стратегии Мартингей�
 
 Для вопросов, предложений и сообщений об ошибках, пожалуйста, обращайтесь к автору:
 - Email: zedraider@bk.ru
-- Версия: 2.0
-- Дата: 2025-08-19
+- Версия: 2.1
+- Дата: 2025-08-21
 
 ---
