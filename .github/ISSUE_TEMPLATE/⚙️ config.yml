@@ -1,0 +1,20 @@
+blank_issues_enabled: false
+contact_links: []
+issue_templates:
+  - name: "🐞 Bug Report"
+    description: "Сообщить об ошибке"
+    title: "[Bug]: "
+    labels: ["bug"]
+    body: .github/ISSUE_TEMPLATE/bug_report.md
+
+  - name: "✨ Feature Request"
+    description: "Предложить новую функцию"
+    title: "[Feature]: "
+    labels: ["enhancement"]
+    body: .github/ISSUE_TEMPLATE/feature_request.md
+
+  - name: "❓ Question"
+    description: "Задать вопрос"
+    title: "[Question]: "
+    labels: ["question"]
+    body: .github/ISSUE_TEMPLATE/question.md
