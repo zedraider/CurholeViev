@@ -178,7 +178,9 @@ class MartingaleApp(tk.Tk):
                 "batch_avg_profit": "Средняя прибыль:",
                 "batch_avg_rounds": "Среднее число раундов:",
                 "batch_wins": "Выигрышных симуляций:",
-                "batch_losses": "Проигрышных симуляций:"
+                "batch_losses": "Проигрышных симуляций:",
+                "totalsim": "Всего симуляций: ",
+                "inidep": "Начальный депозит: "
             },
             "en": {
                 "title": "CurholeView — Martingale Simulator ("f"{self.cur_ver})",
@@ -262,7 +264,9 @@ class MartingaleApp(tk.Tk):
                 "batch_avg_profit": "Average profit:",
                 "batch_avg_rounds": "Average rounds:",
                 "batch_wins": "Won simulations:",
-                "batch_losses": "Lost simulations:"
+                "batch_losses": "Lost simulations:",
+                "totalsim": "Total simulations: ",
+                "inidep": "Initial deposit: "
             }
         }
         self._build_ui(); self._build_menu(); self._poll_queue()
@@ -841,8 +845,8 @@ class MartingaleApp(tk.Tk):
             
             ttk.Label(right_col, text=lang["batch_wins"] + f" {wins}", font=("Segoe UI", 11)).pack(anchor=tk.W, pady=5)
             ttk.Label(right_col, text=lang["batch_losses"] + f" {losses}", font=("Segoe UI", 11)).pack(anchor=tk.W, pady=5)
-            ttk.Label(right_col, text="Total simulations: " + f"{batch_count}", font=("Segoe UI", 11)).pack(anchor=tk.W, pady=5)
-            ttk.Label(right_col, text="Initial deposit: " + f"{deposit:.2f}", font=("Segoe UI", 11)).pack(anchor=tk.W, pady=5)
+            ttk.Label(right_col, text=lang["totalsim"] + f"{batch_count}", font=("Segoe UI", 11)).pack(anchor=tk.W, pady=5)
+            ttk.Label(right_col, text=lang["inidep"] + f"{deposit:.2f}", font=("Segoe UI", 11)).pack(anchor=tk.W, pady=5)
             
             # Создаем текстовое поле для детальных результатов
             details_frame = ttk.LabelFrame(stats_frame, text="Detailed Results", padding=10)
