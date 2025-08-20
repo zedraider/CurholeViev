@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 class MartingaleApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("CurholeView — Martingale Simulator (Optimized)")
+        self.cur_ver = 2.1
         self.geometry("1400x700")
         self.minsize(1400, 700)
         self.maxsize(1400, 700)
@@ -97,7 +97,7 @@ class MartingaleApp(tk.Tk):
         self.lang = "ru"
         self.langs = {
             "ru": {
-                "title": "CurholeView — симулятор мартингейла (Оптимизировано)",
+                "title": "CurholeView — симулятор мартингейла "f"{self.cur_ver}",
                 "deposit": "Депозит:",
                 "max_bet": "Макс. ставка (0=∞):",
                 "multiplier": "Множитель:",
@@ -137,7 +137,7 @@ class MartingaleApp(tk.Tk):
                 "preset_settings": "Настройки пресетов",
                 "theme": "Цветовая тема",
                 "about": "О программе",
-                "about_text": "CurholeView — симулятор мартингейла. Автор: Алексей Мельников zedraider@bk.ru\n\nВерсия: 2.0\nДата: 2025-08-19\n\nИспользуйте на свой страх и риск!",
+                "about_text": "CurholeView — симулятор мартингейла. Автор: Алексей Мельников zedraider@bk.ru\n\nВерсия: "f"{self.cur_ver}\nДата: 2025-08-19\n\nИспользуйте на свой страх и риск!",
                 "choose_theme": "Выберите цветовую тему:",
                 "apply": "Применить",
                 "cancel": "Отмена",
@@ -181,7 +181,7 @@ class MartingaleApp(tk.Tk):
                 "batch_losses": "Проигрышных симуляций:"
             },
             "en": {
-                "title": "CurholeView — Martingale Simulator (Optimized)",
+                "title": "CurholeView — Martingale Simulator ("f"{self.cur_ver})",
                 "deposit": "Deposit:",
                 "max_bet": "Max bet (0=∞):",
                 "multiplier": "Multiplier:",
@@ -221,7 +221,7 @@ class MartingaleApp(tk.Tk):
                 "preset_settings": "Preset settings",
                 "theme": "Theme",
                 "about": "About",
-                "about_text": "CurholeView — Martingale simulator. Author: Alexey Melnikov zedraider@bk.ru\n\nVersion: 2.0\nDate: 2025-08-19\n\nUse at your own risk!",
+                "about_text": "CurholeView — Martingale simulator. Author: Alexey Melnikov zedraider@bk.ru\n\nVersion: 2.1\nDate: 2025-08-19\n\nUse at your own risk!",
                 "choose_theme": "Choose theme:",
                 "apply": "Apply",
                 "cancel": "Cancel",
@@ -815,7 +815,7 @@ class MartingaleApp(tk.Tk):
             # Создаем окно с результатами
             result_window = tk.Toplevel(self)
             result_window.title(lang["batch_results"])
-            result_window.geometry("600x500")
+            result_window.geometry("700x600")
             result_window.grab_set()
             
             # Фрейм для статистики
