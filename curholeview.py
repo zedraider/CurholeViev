@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 class MartingaleApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.cur_ver = 2.1
+        self.cur_ver = 2.2
         self.geometry("1400x700")
         self.minsize(1400, 700)
         self.maxsize(1400, 700)
@@ -925,14 +925,14 @@ class MartingaleApp(tk.Tk):
             )
 
     def _run_batch_simulations(self):
-        #lang = self.langs[self.lang]
+        # lang = self.langs[self.lang]
 
         # Получаем параметры симуляции
         deposit = float(self.deposit_var.get())
         max_bet_limit = float(self.max_bet_var.get())
         base_bet = 1.0
         multiplier = self.multiplier_var.get()
-        #delay = self.delay_var.get()
+        # delay = self.delay_var.get()
         withdraw_win = self.withdraw_per_win_var.get()
         withdraw_percent = self.withdraw_percent_var.get() / 100.0
         win_prob = self.win_prob_var.get() / 100.0
