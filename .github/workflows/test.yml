@@ -19,11 +19,10 @@ jobs:
       with:
         python-version: '3.12'
     
-    - name: Install uv
-      run: pip install uv
-    
     - name: Install dependencies
-      run: uv pip install matplotlib pytest ruff
+      run: |
+        pip install uv
+        uv pip install --system matplotlib pytest ruff
     
     - name: Run ruff check
       run: ruff check .
