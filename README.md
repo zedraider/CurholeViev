@@ -1,4 +1,3 @@
-@"
 # CurholeView - Martingale Strategy Simulator
 
 Python GUI application for simulating and analyzing Martingale betting strategy with real-time visualization.
@@ -16,14 +15,14 @@ Python GUI application for simulating and analyzing Martingale betting strategy 
 - tkinter (included with Python)
 
 ## Installation
-\`\`\`bash
+```bash
 pip install matplotlib
-\`\`\`
+```
 
 ## Usage
-\`\`\`bash
+```bash
 python curholeview.py
-\`\`\`
+```
 
 ## Project Structure
 - \`curholeview.py\` - Main application file
@@ -31,15 +30,14 @@ python curholeview.py
 - \`tests/\` - Unit tests
 
 ## Testing
-\`\`\`bash
+```bash
 # Run tests
 pytest tests/
 
 # Code formatting
 ruff format .
 ruff check .
-\`\`\`
+```
 
 ## License
 MIT
-"@ | Out-File -FilePath README.md -Encoding UTF8
