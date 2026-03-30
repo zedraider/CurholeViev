@@ -1,4 +1,4 @@
-# CurholeView — Martingale Strategy Simulator | # CurholeView — симулятор стратегии Мартингейла
+# CurholeView — Martingale Strategy Simulator | CurholeView — симулятор стратегии Мартингейла
 
 [English](#english) | [Русский](#russian)
 
