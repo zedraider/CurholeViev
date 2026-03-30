@@ -1,4 +1,4 @@
-# CurholeView — симулятор стратегии Мартингейла 🎲
+# CurholeView
 
 [English](#english) | [Русский](#russian)
 
@@ -8,7 +8,6 @@
 [![GitHub stars](https://img.shields.io/github/stars/zedraider/CurholeViev?style=social)](https://github.com/zedraider/CurholeViev/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/zedraider/CurholeViev?style=social)](https://github.com/zedraider/CurholeViev/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/zedraider/CurholeViev)](https://github.com/zedraider/CurholeViev/issues)
-[![Tests](https://github.com/zedraider/CurholeViev/actions/workflows/python-tests.yml/badge.svg)](https://github.com/zedraider/CurholeViev/actions/workflows/python-tests.yml)
 
 ---
 
