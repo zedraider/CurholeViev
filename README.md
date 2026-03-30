@@ -1,6 +1,14 @@
-# CurholeView — Martingale Strategy Simulator | CurholeView — симулятор стратегии Мартингейла
+# CurholeView — симулятор стратегии Мартингейла 🎲
 
 [English](#english) | [Русский](#russian)
+
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform: Cross-platform](https://img.shields.io/badge/platform-Windows%20|%20Linux%20|%20macOS-lightgrey)](https://www.python.org/)
+[![GitHub stars](https://img.shields.io/github/stars/zedraider/CurholeViev?style=social)](https://github.com/zedraider/CurholeViev/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/zedraider/CurholeViev?style=social)](https://github.com/zedraider/CurholeViev/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/zedraider/CurholeViev)](https://github.com/zedraider/CurholeViev/issues)
+[![Tests](https://github.com/zedraider/CurholeViev/actions/workflows/python-tests.yml/badge.svg)](https://github.com/zedraider/CurholeViev/actions/workflows/python-tests.yml)
 
 ---
 
@@ -9,13 +17,7 @@
 
 **Python GUI application** for simulating the Martingale betting strategy (doubling the bet after a loss) with real-time visualization.
 
-![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Platform](https://img.shields.io/badge/platform-Windows%20|%20Linux%20|%20macOS-lightgrey.svg)
-
----
-
-## ✨ Features
+### ✨ Features
 
 - **Martingale Simulation** with customizable parameters
   - Initial deposit, maximum bet limit, bet multiplier
@@ -37,41 +39,30 @@
   - Bilingual support: Russian and English
   - Editable presets (Classic, Aggressive, Conservative)
 
----
-
-## 📸 Screenshots
+### 📸 Screenshots
 
 *Screenshots can be placed here.*
 
----
-
-## 📦 Requirements
+### 📦 Requirements
 
 - Python 3.8 or higher
 - Required libraries:
   - `matplotlib`
   - `tkinter` (included with Python standard distribution)
 
----
+### 🚀 Installation & Usage
 
-## 🚀 Installation & Usage
+    # Clone the repository
+    git clone https://github.com/zedraider/CurholeViev.git
+    cd CurholeViev
 
-1. **Clone the repository**
+    # Install dependencies
+    pip install matplotlib
 
-        git clone https://github.com/zedraider/CurholeViev.git
-        cd CurholeViev
+    # Run the application
+    python curholeview.py
 
-2. **Install dependencies**
-
-        pip install matplotlib
-
-3. **Run the application**
-
-        python curholeview.py
-
----
-
-## ⚙️ Simulation Parameters
+### ⚙️ Simulation Parameters
 
 | Parameter | Description |
 |-----------|-------------|
@@ -84,9 +75,7 @@
 | **Win probability (%)** | Chance of winning each round |
 | **Only on win (percent)** | If enabled, percentage withdrawal applies only after a winning round |
 
----
-
-## 🎮 Controls
+### 🎮 Controls
 
 - **Start** – begin simulation
 - **Stop** – stop running simulation
@@ -95,9 +84,7 @@
 - **Load CSV** – import previously saved simulation
 - **Fast simulation** – disables delay between rounds for rapid execution
 
----
-
-## 📊 Batch Mode
+### 📊 Batch Mode
 
 Run a series of simulations (1 to 1000) with current parameters.  
 Upon completion, a results window displays:
@@ -108,22 +95,16 @@ Upon completion, a results window displays:
 - Win rate percentage
 - Detailed results table (final balance, savings, profit, rounds)
 
----
-
-## 🎨 Themes & Language
+### 🎨 Themes & Language
 
 - **Themes:** Light, Dark, Blue, Green, Pink – select from *Settings → Theme*
 - **Language:** Russian or English – select from *Language* menu
 
----
-
-## 🛠️ Editing Presets
+### 🛠️ Editing Presets
 
 From the menu *Settings → Preset settings*, you can modify the three preset profiles (Classic, Aggressive, Conservative). Changes apply for the current session.
 
----
-
-## 📁 Project Structure
+### 📁 Project Structure
 
     CurholeViev/
     ├── curholeview.py          # main application file
@@ -134,9 +115,7 @@ From the menu *Settings → Preset settings*, you can modify the three preset pr
     ├── dist/                   # built releases (not in repository)
     └── README.md               # this file
 
----
-
-## 🧪 Testing
+### 🧪 Testing
 
 Install additional dependencies from `requirements-dev.txt`, then run:
 
@@ -147,24 +126,27 @@ Code formatting:
     ruff format .
     ruff check .
 
----
+### 🤝 Contributing
 
-## 📄 License
+Contributions are welcome! Feel free to submit a Pull Request.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add: AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+Please make sure tests pass before submitting PRs.
+
+### 📄 License
 
 This project is distributed under the MIT License. See the `LICENSE` file for details.
 
----
-
-## 👤 Author
+### 👤 Author
 
 Alexey Melnikov  
 [zedraider@bk.ru](mailto:zedraider@bk.ru)  
 GitHub: [@zedraider](https://github.com/zedraider)
-
----
-
-_If you find this tool useful, give it a star ⭐ on GitHub!_
-
 
 ---
 
@@ -173,69 +155,52 @@ _If you find this tool useful, give it a star ⭐ on GitHub!_
 
 **Python GUI приложение** для моделирования стратегии Мартингейла (удвоение ставки после проигрыша) с визуализацией в реальном времени.
 
-![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Platform](https://img.shields.io/badge/platform-Windows%20|%20Linux%20|%20macOS-lightgrey.svg)
+### ✨ Возможности
 
----
+- **Симуляция Мартингейла** с настраиваемыми параметрами
+  - Начальный депозит, максимальная ставка, множитель ставки
+  - Задержка между раундами (для визуального режима)
+  - Вероятность выигрыша (0–100%)
+  - Снятие выигрыша (фиксированная сумма или процент от депозита)
+- **Режимы работы**
+  - **Пошаговая симуляция** с отображением каждого раунда
+  - **Быстрая симуляция** (без задержки)
+  - **Пакетный режим** – запуск нескольких симуляций подряд для статистики
+- **Визуализация**
+  - Графики депозита, размера ставки и накоплений в реальном времени
+  - Использование `matplotlib` для интерактивных графиков
+- **Управление данными**
+  - Сохранение результатов в CSV
+  - Загрузка ранее сохранённых симуляций
+- **Интерфейс**
+  - Современный дизайн с темами (светлая, тёмная, синяя, зелёная, розовая)
+  - Поддержка двух языков: русский и английский
+  - Редактируемые пресеты (Классика, Агрессивная, Консервативная)
 
-## ✨ Особенности
-
-- **Симуляция Мартингейла** с настраиваемыми параметрами  
-  - Начальный депозит, максимальная ставка, множитель ставки  
-  - Задержка между раундами (для визуального режима)  
-  - Вероятность выигрыша (0–100%)  
-  - Снятие выигрыша (фиксированная сумма или процент от депозита)  
-- **Режимы работы**  
-  - **Пошаговая симуляция** с отображением каждого раунда  
-  - **Быстрая симуляция** (без задержки)  
-  - **Пакетный режим** – запуск нескольких симуляций подряд для статистики  
-- **Визуализация**  
-  - Графики депозита, размера ставки и накоплений в реальном времени  
-  - Использование `matplotlib` для интерактивных графиков  
-- **Управление данными**  
-  - Сохранение результатов в CSV  
-  - Загрузка ранее сохранённых симуляций  
-- **Интерфейс**  
-  - Современный дизайн с темами (светлая, тёмная, синяя, зелёная, розовая)  
-  - Поддержка двух языков: русский и английский  
-  - Редактируемые пресеты (Классика, Агрессивная, Консервативная)  
-
----
-
-## 🖼️ Скриншоты
+### 📸 Скриншоты
 
 *Здесь можно разместить скриншоты приложения.*
 
----
-
-## 📦 Требования
+### 📦 Требования
 
 - Python 3.8 или выше
 - Библиотеки:
   - `matplotlib`
   - `tkinter` (входит в стандартную поставку Python)
 
----
+### 🚀 Установка и запуск
 
-## 🚀 Установка и запуск
+    # Клонируйте репозиторий
+    git clone https://github.com/zedraider/CurholeViev.git
+    cd CurholeViev
 
-1. **Клонируйте репозиторий**
+    # Установите зависимости
+    pip install matplotlib
 
-        git clone https://github.com/zedraider/CurholeViev.git
-        cd CurholeViev
+    # Запустите приложение
+    python curholeview.py
 
-2. **Установите зависимости**
-
-        pip install matplotlib
-
-3. **Запустите приложение**
-
-        python curholeview.py
-
----
-
-## ⚙️ Параметры симуляции
+### ⚙️ Параметры симуляции
 
 | Параметр | Описание |
 |----------|----------|
@@ -248,9 +213,7 @@ _If you find this tool useful, give it a star ⭐ on GitHub!_
 | **Вероятность выигрыша (%)** | Шанс выигрыша в каждом раунде |
 | **Только при выигрыше (процент)** | Если включено, процент снимается только после выигрышного раунда |
 
----
-
-## 🎮 Управление
+### 🎮 Управление
 
 - **Старт** – начать симуляцию
 - **Стоп** – остановить симуляцию
@@ -259,9 +222,7 @@ _If you find this tool useful, give it a star ⭐ on GitHub!_
 - **Загрузить CSV** – импортировать ранее сохранённую симуляцию
 - **Быстрая симуляция** – отключает задержку между раундами
 
----
-
-## 📊 Пакетный режим
+### 📊 Пакетный режим
 
 Позволяет запустить серию симуляций (от 1 до 1000) с текущими параметрами.  
 После завершения отображается окно со статистикой:
@@ -272,22 +233,16 @@ _If you find this tool useful, give it a star ⭐ on GitHub!_
 - Процент выигрышных симуляций
 - Таблица детальных результатов (итоговый баланс, накопления, прибыль, число раундов)
 
----
+### 🎨 Темы и язык
 
-## 🎨 Темы и язык
+- **Темы:** светлая, тёмная, синяя, зелёная, розовая – выбираются в меню *Настройки → Цветовая тема*
+- **Язык:** русский или английский – меню *Язык*
 
-- **Темы:** светлая, тёмная, синяя, зелёная, розовая – выбираются в меню *Настройки → Цветовая тема*.
-- **Язык:** русский или английский – меню *Язык*.
-
----
-
-## 🛠️ Редактирование пресетов
+### 🛠️ Редактирование пресетов
 
 В меню *Настройки → Настройки пресетов* можно изменить параметры трёх предустановленных профилей (Классика, Агрессивная, Консервативная). Изменения сохраняются на время сеанса.
 
----
-
-## 📁 Структура проекта
+### 📁 Структура проекта
 
     CurholeViev/
     ├── curholeview.py          # основной файл приложения
@@ -298,9 +253,7 @@ _If you find this tool useful, give it a star ⭐ on GitHub!_
     ├── dist/                   # собранные версии (не входят в репозиторий)
     └── README.md               # этот файл
 
----
-
-## 🧪 Тестирование
+### 🧪 Тестирование
 
 Для запуска тестов установите дополнительные зависимости (из `requirements-dev.txt`), затем выполните:
 
@@ -311,15 +264,23 @@ _If you find this tool useful, give it a star ⭐ on GitHub!_
     ruff format .
     ruff check .
 
----
+### 🤝 Участие в разработке
 
-## 📄 Лицензия
+Приветствуются любые вклады! Смело отправляйте Pull Request.
+
+1. Форкните проект
+2. Создайте ветку (`git checkout -b feature/AmazingFeature`)
+3. Зафиксируйте изменения (`git commit -m 'Add: AmazingFeature'`)
+4. Отправьте в ветку (`git push origin feature/AmazingFeature`)
+5. Откройте Pull Request
+
+Пожалуйста, убедитесь, что тесты проходят перед отправкой PR.
+
+### 📄 Лицензия
 
 Проект распространяется под лицензией MIT. Подробности в файле `LICENSE`.
 
----
-
-## 👤 Автор
+### 👤 Автор
 
 Алексей Мельников  
 [zedraider@bk.ru](mailto:zedraider@bk.ru)  
@@ -327,4 +288,4 @@ GitHub: [@zedraider](https://github.com/zedraider)
 
 ---
 
-_Если этот инструмент оказался полезен, поставьте звезду ⭐ на GitHub!_
+*Если этот инструмент оказался полезен, поставьте звезду ⭐ на GitHub!*
