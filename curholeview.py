@@ -659,7 +659,7 @@ class MartingaleApp(tk.Tk):
         win.title(lang["preset_settings"])
         win.grab_set()
         entries = []
-        for i, preset in enumerate(self.presets):
+        for preset in self.presets:
             frame = ttk.LabelFrame(
                 win,
                 text=lang[preset["name"].lower()]
@@ -750,8 +750,9 @@ class MartingaleApp(tk.Tk):
                     )
                     self.presets[i]["win_prob"] = float(win_prob_var.get())
                     self.presets[i]["percent_on_win"] = bool(percent_on_win_var.get())
-                except Exception:
-                    pass
+                except ValueError:
+                    # Поле содержит нечисловое значение — оставляем предыдущее
+                    continue
                 self.preset_buttons[i].config(
                     text=lang[self.presets[i]["name"].lower()]
                     if self.presets[i]["name"].lower() in lang
@@ -854,6 +855,7 @@ class MartingaleApp(tk.Tk):
                     self.status_msg,
                 ],
                 labels,
+                strict=True,
             ):
                 lbl.configure(text=t)
 
@@ -919,7 +921,7 @@ class MartingaleApp(tk.Tk):
                         }
                     )
                     time.sleep(delay)
-        except Exception as e:
+        except (ValueError, TypeError, tk.TclError) as e:
             self.ui_queue.put(
                 {
                     "round": self.round_index,
@@ -1085,7 +1087,7 @@ class MartingaleApp(tk.Tk):
                 win_rate = float(u.get("win_rate", 0))
                 batch_count = int(u.get("batch_count", 0))
                 deposit = float(u.get("deposit", 0))
-            except Exception:
+            except (ValueError, TypeError):
                 avg_profit = avg_rounds = win_rate = 0.0
                 wins = losses = batch_count = 0
                 deposit = 0.0
@@ -1211,7 +1213,8 @@ class MartingaleApp(tk.Tk):
             self.status_bet.configure(text=lang["bet"].format(bet))
             self.status_savings.configure(text=lang["savings"].format(savings))
             self.status_msg.configure(text=msg)
-        except Exception:
+        except tk.TclError:
+            # Виджеты статуса ещё не созданы или уже уничтожены
             self.status_msg.configure(text=str(msg))
         self._push_point(r, bank, bet, savings)
 
@@ -1285,7 +1288,7 @@ class MartingaleApp(tk.Tk):
                     writer.writerow(["round", "bank", "bet", "savings", "msg"])
                     writer.writerows(self.results)
                 messagebox.showinfo(lang["ready"], lang["saved"].format(path))
-            except Exception as e:
+            except OSError as e:
                 messagebox.showerror(lang["error"], lang["save_error"].format(e))
 
     def load_csv(self):
@@ -1310,14 +1313,15 @@ class MartingaleApp(tk.Tk):
                     savings = float(row[3]) if len(row) > 3 and row[3] != "" else 0.0
                     msg = row[4] if len(row) > 4 else ""
                     parsed.append([r, b, bet, savings, msg])
-                except Exception:
+                except (ValueError, IndexError):
+                    # Пропускаем повреждённые строки CSV
                     continue
             if not parsed:
                 return messagebox.showwarning(lang["warning"], lang["no_data_file"])
             self.results = parsed
             self._clear_plot()
             last_entry = None
-            for r, b, bet, savings, msg in self.results:
+            for r, b, bet, savings, _msg in self.results:
                 self._push_point(int(r), float(b), float(bet), float(savings))
                 last_entry = (r, b, bet, savings)
             if last_entry:
@@ -1333,7 +1337,7 @@ class MartingaleApp(tk.Tk):
                     text=lang["savings"].format(self.savings_account)
                 )
             self.status_msg.configure(text=lang["loaded"].format(len(self.results)))
-        except Exception as e:
+        except (OSError, ValueError, csv.Error) as e:
             messagebox.showerror(lang["error"], lang["load_error"].format(e))
 
 
