@@ -1,10 +1,11 @@
+import csv
+import queue
+import random
 import threading
 import time
-import random
-import queue
-import csv
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import filedialog, messagebox, ttk
+
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
@@ -17,6 +18,7 @@ class MartingaleApp(tk.Tk):
         self.minsize(1400, 700)
         self.maxsize(1400, 700)
         self.stop_event, self.ui_queue = threading.Event(), queue.Queue()
+        self.sim_running = False
         self.round_index = 0
         self.bankroll = 0.0
         self.base_bet = 1.0
@@ -247,7 +249,7 @@ class MartingaleApp(tk.Tk):
                 "preset_settings": "Preset settings",
                 "theme": "Theme",
                 "about": "About",
-                "about_text": "CurholeView — Martingale simulator. Author: Alexey Melnikov zedraider@bk.ru\n\nVersion: 2.1\nDate: 2025-08-19\n\nUse at your own risk!",
+                "about_text": f"CurholeView — Martingale simulator. Author: Alexey Melnikov zedraider@bk.ru\n\nVersion: {self.cur_ver}\nDate: 2025-08-19\n\nUse at your own risk!",
                 "choose_theme": "Choose theme:",
                 "apply": "Apply",
                 "cancel": "Cancel",
@@ -634,7 +636,7 @@ class MartingaleApp(tk.Tk):
         win.grab_set()
         theme_var = tk.StringVar(value=self.theme)
         ttk.Label(win, text=lang["choose_theme"]).pack(padx=10, pady=10)
-        for theme_name, theme_data in self.theme_colors.items():
+        for theme_name in self.theme_colors:
             ttk.Radiobutton(
                 win, text=theme_name.capitalize(), variable=theme_var, value=theme_name
             ).pack(anchor=tk.W, padx=12)
@@ -771,11 +773,17 @@ class MartingaleApp(tk.Tk):
 
     def on_start(self):
         lang = self.langs[self.lang]
+        if self.sim_running:
+            return
         try:
-            self.bankroll = float(self.deposit_var.get())
-            self.max_bet_limit = float(self.max_bet_var.get())
+            bankroll = float(self.deposit_var.get())
+            max_bet_limit = float(self.max_bet_var.get())
         except ValueError:
             return messagebox.showerror(lang["error"], lang["incorrect_deposit"])
+        if bankroll <= 0 or max_bet_limit < 0:
+            return messagebox.showerror(lang["error"], lang["incorrect_deposit"])
+        self.bankroll = bankroll
+        self.max_bet_limit = max_bet_limit
         self.base_bet = 1.0
         self.current_bet = 1.0
         self.round_index = 0
@@ -783,12 +791,16 @@ class MartingaleApp(tk.Tk):
         self._clear_plot()
         self._push_point()
         self.savings_account = 0.0
+        self.withdrawn_total = 0.0
         self.stop_event.clear()
+        self.sim_running = True
         threading.Thread(target=self._worker_loop, daemon=True).start()
         self.status_msg.configure(text=lang["simulating"])
 
     def on_batch_start(self):
         lang = self.langs[self.lang]
+        if self.sim_running:
+            return
         try:
             deposit = float(self.deposit_var.get())
             max_bet = float(self.max_bet_var.get())
@@ -799,6 +811,7 @@ class MartingaleApp(tk.Tk):
 
         self.batch_results = []
         self.batch_count = self.batch_count_var.get()
+        self.sim_running = True
 
         # Запускаем симуляции в отдельном потоке
         threading.Thread(target=self._run_batch_simulations, daemon=True).start()
@@ -848,6 +861,14 @@ class MartingaleApp(tk.Tk):
 
     def _worker_loop(self):
         lang = self.langs[self.lang]
+        # Снимаем снимок параметров в потоке Tk (tk-переменные не потокобезопасны)
+        win_prob = self.win_prob_var.get() / 100.0
+        multiplier = self.multiplier_var.get()
+        withdraw_win = self.withdraw_per_win_var.get()
+        withdraw_percent = self.withdraw_percent_var.get() / 100.0
+        percent_on_win_only = self.apply_percent_on_win_var.get()
+        delay = self.delay_var.get()
+        fast = self.fast_mode.get()
         try:
             while not self.stop_event.is_set() and self.bankroll > 0:
                 bet = max(self.base_bet, self.current_bet)
@@ -857,11 +878,11 @@ class MartingaleApp(tk.Tk):
                 if bet <= 0:
                     break
                 self.round_index += 1
-                lose = random.random() > self.win_prob_var.get() / 100
+                lose = random.random() > win_prob
                 self.bankroll -= bet
                 msg = ""
                 if lose:
-                    next_bet = bet * self.multiplier_var.get()
+                    next_bet = bet * multiplier
                     if self.max_bet_limit > 0:
                         next_bet = min(next_bet, self.max_bet_limit)
                     self.current_bet = next_bet
@@ -870,26 +891,24 @@ class MartingaleApp(tk.Tk):
                     self.bankroll += bet * 2
                     self.current_bet = self.base_bet
                     msg = lang["win"]
-                    w = self.withdraw_per_win_var.get()
+                    w = withdraw_win
                     if w > 0 and self.bankroll >= w:
                         self.bankroll -= w
                         self.savings_account += w
+                        self.withdrawn_total += w
                         msg += lang["withdrawn"].format(w)
-                p = self.withdraw_percent_var.get() / 100.0
-                if p > 0.0:
-                    if (not self.apply_percent_on_win_var.get()) or (
-                        self.apply_percent_on_win_var.get() and not lose
-                    ):
-                        amt = round(self.bankroll * p, 2)
-                        if amt > 0:
-                            amt = min(amt, self.bankroll)
-                            self.bankroll -= amt
-                            self.savings_account += amt
-                            msg += lang["percent_withdrawn"].format(amt)
+                if withdraw_percent > 0.0 and (not percent_on_win_only or not lose):
+                    amt = round(self.bankroll * withdraw_percent, 2)
+                    if amt > 0:
+                        amt = min(amt, self.bankroll)
+                        self.bankroll -= amt
+                        self.savings_account += amt
+                        self.withdrawn_total += amt
+                        msg += lang["percent_withdrawn"].format(amt)
                 self.results.append(
                     [self.round_index, self.bankroll, bet, self.savings_account, msg]
                 )
-                if not self.fast_mode.get():
+                if not fast:
                     self.ui_queue.put(
                         {
                             "round": self.round_index,
@@ -899,7 +918,7 @@ class MartingaleApp(tk.Tk):
                             "msg": msg,
                         }
                     )
-                    time.sleep(self.delay_var.get())
+                    time.sleep(delay)
         except Exception as e:
             self.ui_queue.put(
                 {
@@ -921,28 +940,28 @@ class MartingaleApp(tk.Tk):
                     "bet": self.current_bet,
                     "savings": self.savings_account,
                     "msg": final_msg,
+                    "done": True,
                 }
             )
 
     def _run_batch_simulations(self):
-        # lang = self.langs[self.lang]
-
-        # Получаем параметры симуляции
+        # Снимаем снимок параметров в потоке Tk (tk-переменные не потокобезопасны)
         deposit = float(self.deposit_var.get())
         max_bet_limit = float(self.max_bet_var.get())
         base_bet = 1.0
         multiplier = self.multiplier_var.get()
-        # delay = self.delay_var.get()
         withdraw_win = self.withdraw_per_win_var.get()
         withdraw_percent = self.withdraw_percent_var.get() / 100.0
         win_prob = self.win_prob_var.get() / 100.0
-        apply_percent_on_win = self.apply_percent_on_win_var.get()
+        batch_count = self.batch_count
 
-        wins = 0
         total_profit = 0.0
         total_rounds = 0
+        random_ = random.random  # локальная ссылка — быстрее в цикле
 
-        for i in range(self.batch_count):
+        for i in range(batch_count):
+            if self.stop_event.is_set():
+                break
             # Инициализация симуляции
             bankroll = deposit
             current_bet = base_bet
@@ -962,7 +981,7 @@ class MartingaleApp(tk.Tk):
                 if bet <= 0:
                     break
 
-                lose = random.random() > win_prob
+                lose = random_() > win_prob
                 bankroll -= bet
 
                 if lose:
@@ -973,7 +992,6 @@ class MartingaleApp(tk.Tk):
                 else:
                     bankroll += bet * 2
                     current_bet = base_bet
-                    wins += 1
 
                     # Снимаем выигрыш, если настроено
                     if withdraw_win > 0 and bankroll >= withdraw_win:
@@ -982,62 +1000,49 @@ class MartingaleApp(tk.Tk):
 
                     # Снимаем процент, если настроено
                     if withdraw_percent > 0:
-                        if (not apply_percent_on_win) or (
-                            apply_percent_on_win and not lose
-                        ):
-                            amt = round(bankroll * withdraw_percent, 2)
-                            if amt > 0:
-                                amt = min(amt, bankroll)
-                                bankroll -= amt
-                                savings_account += amt
+                        amt = round(bankroll * withdraw_percent, 2)
+                        if amt > 0:
+                            amt = min(amt, bankroll)
+                            bankroll -= amt
+                            savings_account += amt
 
             # Сохраняем результаты симуляции
             profit = bankroll + savings_account - deposit
-            result_data = {
-                "simulation": i + 1,
-                "final_balance": bankroll,
-                "savings": savings_account,
-                "profit": profit,
-                "rounds": round_index,
-            }
-            self.batch_results.append(result_data)
-
-            # Выводим отладочную информацию для последней симуляции
-            if i == self.batch_count - 1:
-                print(f"Last simulation result: {result_data}")
+            self.batch_results.append(
+                {
+                    "simulation": i + 1,
+                    "final_balance": bankroll,
+                    "savings": savings_account,
+                    "profit": profit,
+                    "rounds": round_index,
+                }
+            )
 
             total_profit += profit
             total_rounds += round_index
 
             # Обновляем прогресс
-            if i % 10 == 0 or i == self.batch_count - 1:
-                progress = (i + 1) / self.batch_count * 100
+            if i % 10 == 0 or i == batch_count - 1:
+                progress = (i + 1) / batch_count * 100
                 self.ui_queue.put(
-                    {"progress": progress, "current": i + 1, "total": self.batch_count}
+                    {"progress": progress, "current": i + 1, "total": batch_count}
                 )
 
+        done = len(self.batch_results)
+        if done == 0:
+            self.ui_queue.put({"done_batch": True})
+            return
+
         # Рассчитываем статистику
-        avg_profit = total_profit / self.batch_count
-        avg_rounds = total_rounds / self.batch_count
+        avg_profit = total_profit / done
+        avg_rounds = total_rounds / done
 
-        # Правильный расчет процента выигрышей
-        # Каждый раунд может быть выигрышем или проигрышем
-        # Поэтому общее количество раундов всех симуляций = self.batch_count * среднее количество раундов
-        # Но для простоты и понятности, будем считать симуляцию выигрышной, если в итоге баланс + накопления > депозита
-        winning_sims = 0
-        for result in self.batch_results:
-            if result["profit"] > 0:
-                winning_sims += 1
+        # Симуляция считается выигрышной, если итоговый баланс + накопления > депозит
+        winning_sims = sum(1 for r in self.batch_results if r["profit"] > 0)
 
-        loss_sims = self.batch_count - winning_sims
-        win_rate = (
-            winning_sims / self.batch_count
-        ) * 100  # Процент симуляций, закончившихся с прибылью
-
-        # Выводим отладочную информацию
-        print(
-            f"Calculated stats: avg_profit={avg_profit}, avg_rounds={avg_rounds}, winning_sims={winning_sims}, loss_sims={loss_sims}, win_rate={win_rate}"
-        )
+        loss_sims = done - winning_sims
+        # Процент симуляций, закончившихся с прибылью
+        win_rate = winning_sims / done * 100
 
         # Отображаем результаты
         self.ui_queue.put(
@@ -1048,8 +1053,9 @@ class MartingaleApp(tk.Tk):
                 "wins": winning_sims,
                 "losses": loss_sims,
                 "win_rate": win_rate,
-                "batch_count": self.batch_count,
+                "batch_count": done,
                 "deposit": deposit,
+                "done": True,
             }
         )
 
@@ -1064,11 +1070,12 @@ class MartingaleApp(tk.Tk):
     def _apply_update(self, u):
         lang = self.langs[self.lang]
 
+        # Обработка завершения фоновой задачи (освобождаем флаг запуска)
+        if u.get("done") or u.get("done_batch"):
+            self.sim_running = False
+
         # Обработка результатов множественных симуляций
         if u.get("batch_complete"):
-            # Выводим отладочную информацию
-            print("Batch results received:", u)
-
             # Получаем данные с явной проверкой типа
             try:
                 avg_profit = float(u.get("avg_profit", 0))
@@ -1078,13 +1085,7 @@ class MartingaleApp(tk.Tk):
                 win_rate = float(u.get("win_rate", 0))
                 batch_count = int(u.get("batch_count", 0))
                 deposit = float(u.get("deposit", 0))
-
-                # Выводим распарсенные данные
-                print(
-                    f"Parsed data: avg_profit={avg_profit}, avg_rounds={avg_rounds}, wins={wins}, losses={losses}, win_rate={win_rate}, batch_count={batch_count}, deposit={deposit}"
-                )
-            except Exception as e:
-                print(f"Error processing batch results: {e}")
+            except Exception:
                 avg_profit = avg_rounds = win_rate = 0.0
                 wins = losses = batch_count = 0
                 deposit = 0.0
@@ -1163,26 +1164,16 @@ class MartingaleApp(tk.Tk):
             scrollbar.config(command=results_text.yview)
 
             # Заполняем результаты
-            results_text.insert(
-                tk.END, "Simulation #\tFinal Balance\tSavings\tProfit\tRounds\n"
+            lines = [
+                "Simulation #\tFinal Balance\tSavings\tProfit\tRounds\n",
+                "-" * 70 + "\n",
+            ]
+            lines.extend(
+                f"{r['simulation']}\t\t{r['final_balance']:.2f}\t\t"
+                f"{r['savings']:.2f}\t\t{r['profit']:.2f}\t\t{r['rounds']}\n"
+                for r in self.batch_results
             )
-            results_text.insert(tk.END, "-" * 70 + "\n")
-
-            # Выводим отладочную информацию
-            print(f"Total batch results to display: {len(self.batch_results)}")
-
-            for result in self.batch_results:
-                # Выводим отладочную информацию для каждого результата
-                print(f"Processing result: {result}")
-
-                results_text.insert(
-                    tk.END,
-                    f"{result['simulation']}\t\t"
-                    f"{result['final_balance']:.2f}\t\t"
-                    f"{result['savings']:.2f}\t\t"
-                    f"{result['profit']:.2f}\t\t"
-                    f"{result['rounds']}\n",
-                )
+            results_text.insert(tk.END, "".join(lines))
 
             # Делаем текстовое поле доступным только для чтения
             results_text.config(state=tk.DISABLED)
@@ -1233,9 +1224,8 @@ class MartingaleApp(tk.Tk):
         self.bet_line.set_data([], [])
         self.savings_line.set_data([], [])
         self._rescale_axes()
-        self.canvas_bankroll.draw_idle()
-        self.canvas_bet.draw_idle()
-        self.canvas_savings.draw_idle()
+        for canvas in (self.canvas_bankroll, self.canvas_bet, self.canvas_savings):
+            canvas.draw_idle()
 
     def _push_point(self, r=None, b=None, bet=None, savings=None):
         idx = self.round_index if r is None else r
@@ -1256,38 +1246,30 @@ class MartingaleApp(tk.Tk):
 
     def _rescale_axes(self):
         if not self.x_data:
-            self.ax_bankroll.set_xlim(0, 1)
-            self.ax_bankroll.set_ylim(0, 1)
-            self.ax_bet.set_xlim(0, 1)
-            self.ax_bet.set_ylim(0, 1)
-            self.ax_savings.set_xlim(0, 1)
-            self.ax_savings.set_ylim(0, 1)
+            for ax in (self.ax_bankroll, self.ax_bet, self.ax_savings):
+                ax.set_xlim(0, 1)
+                ax.set_ylim(0, 1)
             return
         xmin, xmax = min(self.x_data), max(self.x_data)
+        xlim = (max(0, xmin - 1), xmax + 1)
+
+        def y_bounds(data):
+            ymin, ymax = min(data), max(data)
+            if ymin == ymax:
+                ymin, ymax = ymin - 1, ymax + 1
+            else:
+                ymin, ymax = ymin * 0.95, ymax * 1.05
+            return max(0, ymin), ymax
+
         # депозит
-        self.ax_bankroll.set_xlim(max(0, xmin - 1), xmax + 1)
-        ymin, ymax = min(self.bank_data), max(self.bank_data)
-        ymin, ymax = (
-            (ymin - 1, ymax + 1) if ymin == ymax else (ymin * 0.95, ymax * 1.05)
-        )
-        self.ax_bankroll.set_ylim(max(0, ymin), ymax)
+        self.ax_bankroll.set_xlim(*xlim)
+        self.ax_bankroll.set_ylim(*y_bounds(self.bank_data))
         # ставка
-        self.ax_bet.set_xlim(max(0, xmin - 1), xmax + 1)
-        ymin, ymax = min(self.bet_data), max(self.bet_data)
-        ymin, ymax = (
-            (ymin - 1, ymax + 1) if ymin == ymax else (ymin * 0.95, ymax * 1.05)
-        )
-        self.ax_bet.set_ylim(max(0, ymin), ymax)
-        # savings axis
-        self.ax_savings.set_xlim(max(0, xmin - 1), xmax + 1)
-        ymin, ymax = (
-            min(self.savings_data),
-            max(self.savings_data) if self.savings_data else (0, 1),
-        )
-        ymin, ymax = (
-            (ymin - 1, ymax + 1) if ymin == ymax else (ymin * 0.95, ymax * 1.05)
-        )
-        self.ax_savings.set_ylim(max(0, ymin), ymax)
+        self.ax_bet.set_xlim(*xlim)
+        self.ax_bet.set_ylim(*y_bounds(self.bet_data))
+        # накопления
+        self.ax_savings.set_xlim(*xlim)
+        self.ax_savings.set_ylim(*y_bounds(self.savings_data))
 
     def save_csv(self):
         lang = self.langs[self.lang]
